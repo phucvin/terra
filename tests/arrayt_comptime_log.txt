@@ -1,0 +1,6 @@
+hello
+accessing array element
+accessing array element
+hello
+accessing array element
+accessing array element

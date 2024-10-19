@@ -1,3 +1,6 @@
+log = io.open("arrayt_comptime_log.txt", "a")
+log:write("hello\n")
+
 C = terralib.includecstring [[
 	#include <stdio.h>
 	#include <stdlib.h>
@@ -22,6 +25,7 @@ function Array(T)
 	end
 	ArrayImpl.metamethods.__apply = macro(function(self,idx)
 		print("accesing ", idx)
+		log:write("accessing array element\n")
 		return `self.data[idx]  --`
 	end)
 	ArrayImpl.metamethods.__methodmissing = macro(function(methodname,selfexp,...)
