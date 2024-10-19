@@ -29,3 +29,22 @@ test.eq(foo(10,2),20)
 test.eq(foo(0,1),0)
 test.eq(foo2(10),45)
 test.eq(foo3(10),55)
+
+local arr = {1,2}
+for i = 1, #arr do
+    print(arr[i])
+end
+
+local C = terralib.includecstring [[
+   #include <stdio.h>
+]]
+
+terra t01()
+    var arr : int[2]
+    arr[0], arr[1] = 11, 22
+    for i = 0, 2 do
+        C.printf("%d\n", arr[i])
+    end
+end
+
+t01()
