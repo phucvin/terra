@@ -17,17 +17,19 @@ function Array(T)
 		self.N = N
 	end
 	terra ArrayImpl:free()
+		C.printf("freeing array of %d elements\n", self.N)
 		C.free(self.data)
 	end
 	ArrayImpl.metamethods.__apply = macro(function(self,idx)
-		return `self.data[idx]
+		print("accesing ", idx)
+		return `self.data[idx]  --`
 	end)
 	ArrayImpl.metamethods.__methodmissing = macro(function(methodname,selfexp,...)
 		local args = terralib.newlist {...}
 		local i = symbol(int)
 		local promotedargs = args:map(function(a)
 			if arraytypes[a:gettype()] then
-				return `a(i)
+				return `a(i)  --`
 			else
 				return a
 			end
@@ -56,20 +58,23 @@ terra Complex:add(c : Complex)
 end
 
 ComplexArray = Array(Complex)
-N = 10
 terra testit()
 	var ca : ComplexArray
-	ca:init(N)
-	for i = 0,N do
+	ca:init(10)
+	for i = 0,ca.N do
 		ca(i) = Complex { i, i + 1 }
 	end
 	var ra = ca:add(ca)
 	return ra
 end
 local r = testit()
-assert(r.N == N)
-for i = 0,N-1 do
+assert(r.N == 10)
+for i = 0,r.N-1 do
 	assert(r.data[i].real == 2*i)
 	assert(r.data[i].imag == 2*(i+1))
 end
 assert(tostring(Array(int)) == "Array(int32)")
+terra cleanup(a1 : ComplexArray)
+	a1:free()
+end
+cleanup(r)
